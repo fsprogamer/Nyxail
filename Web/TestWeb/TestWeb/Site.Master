@@ -9,7 +9,7 @@
     </asp:ContentPlaceHolder>
 </head>
 <body>
-    <form runat="server">
+    <form runat="server" class="FormContent">
     <div class="page">
         <div class="header">
             <div class="title">
