@@ -4,28 +4,17 @@
 <asp:Content ID="HeaderContent" runat="server" ContentPlaceHolderID="HeadContent">
 </asp:Content>
 <asp:Content ID="BodyContent" runat="server" ContentPlaceHolderID="MainContent">
-    <script src="scripts/jquery-1.4.1.js" type="text/javascript"></script>
+    <script src="scripts/jquery-1.4.1.js" type="text/javascript"></script>	
     <script  type="text/javascript">
-    
-       $(document).ready(function () {
-           jQuery(".FormContent").submit(function () {
-
-               //alert("Welcome jQuery !");
-               //var formData = {
-               //    "name": $("#name").val()
-               //, "color": $("#color").val()
-               //};
-               //var jsonData = JSON.stringify({ formData: formData });
-
+        $(document).ready(function () {
+           jQuery(".FormContent").submit(function (e) {
+               e.preventDefault();
                var formData = [];
                formData[0] = $("#name").val();
                formData[1] = $("#color").val();
                formData[2] = $("#18-years").is(':checked');
                formData[3] = $("input:radio:checked").val();
-               //radio - morning
-               //radio - evening
-               //radio - night
-               
+                  
                var jsonData = JSON.stringify({ formData: formData });
 
                $.ajax({
@@ -33,7 +22,7 @@
                    url: "Default.aspx/getformData",
                    data: jsonData,
                    contentType: "application/json; charset=utf-8",
-                   dataType: "json", // dataType is json format
+                   dataType: "json", 
                    async: true,
                    cache: false,
                    success: OnSuccess,
@@ -42,18 +31,31 @@
            });
        });
         
-        /*
-        $(document).ready(function () {
-            jQuery(".FormContent").submit(function () {
-                alert("Welcome jQuery !");
-            });
-        });
-        */
-       function OnSuccess(response) {
-           alert(response.d);
+        function OnErrorCall(jqXHR, textStatus, exception) {
+                $("#dialog").empty();
+                var msg = '';
+                var r = jQuery.parseJSON(jqXHR.responseText);
+                msg = r.Message;
+               
+                //alert("Error: " + msg);
+                $("#dialog").append(msg);
+        }
+
+        function OnSuccess(response) {
+            $("#dialog").empty();
+            var item = response.d;      
+            var msg = '';
+            var Name = item.Name;
+            var FavoriteColor = item.FavoriteColor;
+            var Over18 = item.Over18;
+            var FavoriteTime = item.FavoriteTime;
+            msg += Name + " - " + FavoriteColor + " - " + Over18 + " - " + FavoriteTime + "<br>";
+
+            //alert("Success: " + msg);
+            $("#dialog").append(msg);
        }
-       function OnErrorCall(response) { console.log(error); }
     </script>
+
     <h2>Test form</h2>
 	<form action="Default.aspx">
 		<table>
@@ -89,6 +91,7 @@
 				<td colspan="2"><input type="submit" /></td>
 			</tr>
 		</table>
-		
+		<div id="dialog">
+        </div>
 	</form>
 </asp:Content>
